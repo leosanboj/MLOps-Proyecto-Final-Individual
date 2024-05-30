@@ -1,0 +1,761 @@
+$ sudo docker build -t bikes_job .
+[sudo] contraseña para x: 
+[+] Building 1.9s (10/10) FINISHED                                                                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                                                                     0.0s
+ => => transferring dockerfile: 413B                                                                                                                     0.0s
+ => [internal] load metadata for docker.io/library/python:3.10.12-slim                                                                                   1.6s
+ => [internal] load .dockerignore                                                                                                                        0.0s
+ => => transferring context: 2B                                                                                                                          0.0s
+ => [internal] load build context                                                                                                                        0.0s
+ => => transferring context: 4.48kB                                                                                                                      0.0s
+ => [1/5] FROM docker.io/library/python:3.10.12-slim@sha256:4d440b214e447deddc0a94de23a3d97d28dfafdf125a8b4bb8073381510c9ee2                             0.0s
+ => CACHED [2/5] WORKDIR /app                                                                                                                            0.0s
+ => CACHED [3/5] COPY requirements.txt .                                                                                                                 0.0s
+ => CACHED [4/5] RUN pip install --no-cache-dir -r requirements.txt                                                                                      0.0s
+ => [5/5] COPY . .                                                                                                                                       0.1s
+ => exporting to image                                                                                                                                   0.1s
+ => => exporting layers                                                                                                                                  0.0s
+ => => writing image sha256:e98c28e93c6bbc470f5c96df229335187a06ad678adde79eaa1e081868339296                                                             0.0s
+ => => naming to docker.io/library/bikes_job                                                                                                             0.0s
+$ sudo docker run -it --rm -v /home/x/Escritorio/shared:/shared bikes_job python3 app/pipeline.py train /shared/settings.json /shared/SeoulBikeData.csv /shared/model.pkl
+
+Pipeline: init [settings path '/shared/settings.json']
+{
+  "dataExtractor": {
+    "encoding": "ISO-8859-15",
+    "dtypes": {
+      "Date": "object",
+      "Rented Bike Count": "Int64",
+      "Hour": "Int64",
+      "Temperature(\u00b0C)": "Float64",
+      "Humidity(%)": "Int64",
+      "Wind speed (m/s)": "Float64",
+      "Visibility (10m)": "Int64",
+      "Dew point temperature(\u00b0C)": "Float64",
+      "Solar Radiation (MJ/m2)": "Float64",
+      "Rainfall(mm)": "Float64",
+      "Snowfall (cm)": "Float64",
+      "Seasons": "object",
+      "Holiday": "object",
+      "Functioning Day": "object"
+    }
+  },
+  "dataValidator": {
+    "dtypes": {
+      "Date": "object",
+      "Rented Bike Count": "Int64",
+      "Hour": "Int64",
+      "Temperature(\u00b0C)": "Float64",
+      "Humidity(%)": "Int64",
+      "Wind speed (m/s)": "Float64",
+      "Visibility (10m)": "Int64",
+      "Dew point temperature(\u00b0C)": "Float64",
+      "Solar Radiation (MJ/m2)": "Float64",
+      "Rainfall(mm)": "Float64",
+      "Snowfall (cm)": "Float64",
+      "Seasons": "object",
+      "Holiday": "object",
+      "Functioning Day": "object"
+    },
+    "maxNulls%": {
+      "Date": 0,
+      "Rented Bike Count": 10,
+      "Hour": 10,
+      "Temperature(\u00b0C)": 10,
+      "Humidity(%)": 10,
+      "Wind speed (m/s)": 10,
+      "Visibility (10m)": 10,
+      "Dew point temperature(\u00b0C)": 10,
+      "Solar Radiation (MJ/m2)": 10,
+      "Rainfall(mm)": 10,
+      "Snowfall (cm)": 10,
+      "Seasons": 10,
+      "Holiday": 10,
+      "Functioning Day": 10
+    },
+    "dranges": {
+      "Date": [
+        "01/01/2000",
+        "01/01/2019"
+      ],
+      "Rented Bike Count": [
+        0,
+        null
+      ],
+      "Hour": [
+        0,
+        23
+      ],
+      "Temperature(\u00b0C)": [
+        -15,
+        40
+      ],
+      "Humidity(%)": [
+        0,
+        100
+      ],
+      "Wind speed (m/s)": [
+        0,
+        7
+      ],
+      "Visibility (10m)": [
+        30,
+        2000
+      ],
+      "Dew point temperature(\u00b0C)": [
+        -30,
+        27
+      ],
+      "Solar Radiation (MJ/m2)": [
+        0,
+        3.5
+      ],
+      "Rainfall(mm)": [
+        0,
+        35
+      ],
+      "Snowfall (cm)": [
+        0,
+        8
+      ],
+      "Seasons": 4,
+      "Holiday": 2,
+      "Functioning Day": 2
+    }
+  },
+  "dataPreparator": {
+    "renameColumns": {
+      "Date": "date",
+      "Rented Bike Count": "rented",
+      "Hour": "hour",
+      "Temperature(\u00b0C)": "temperature",
+      "Humidity(%)": "humidity",
+      "Wind speed (m/s)": "wind",
+      "Visibility (10m)": "visibility",
+      "Dew point temperature(\u00b0C)": "dewPoint",
+      "Solar Radiation (MJ/m2)": "radiation",
+      "Rainfall(mm)": "rain",
+      "Snowfall (cm)": "snow",
+      "Seasons": "seasons",
+      "Holiday": "holiday",
+      "Functioning Day": "open"
+    }
+  },
+  "modelTraining": {
+    "featuresSelection": {
+      "correlation": 20
+    },
+    "splitData": {
+      "train_window_percentage": 0.95
+    },
+    "maxPe": 5
+  }
+}
+Pipeline: init done
+
+Pipeline: run
+DataExtractor: init
+
+DataExtractor: run
+DataExtractor: run done [shape (8760, 14)]
+
+DataValidator: init
+
+DataValidator: run
+DataValidator: dNullsChecker
+                       column  nulls found %  max allowed %
+0                        Date       0.000000            0.0
+1           Rented Bike Count       0.011416           10.0
+2                        Hour       0.011416           10.0
+3             Temperature(°C)       0.011416           10.0
+4                 Humidity(%)       0.011416           10.0
+5            Wind speed (m/s)       0.011416           10.0
+6            Visibility (10m)       0.011416           10.0
+7   Dew point temperature(°C)       0.011416           10.0
+8     Solar Radiation (MJ/m2)       0.011416           10.0
+9                Rainfall(mm)       0.011416           10.0
+10              Snowfall (cm)       0.011416           10.0
+11                    Seasons       0.011416           10.0
+12                    Holiday       0.011416           10.0
+13            Functioning Day       0.011416           10.0
+DataValidator: dNullsChecker done
+
+DataValidator: dTypesChecker
+DataValidator: dTypesChecker done
+
+DataValidator: dRangesChecker
+Filtering column 01/01/2000 <= Date <= 01/01/2019 (0 rows removed)
+Filtering column 0 <= Rented Bike Count <= None (0 rows removed)
+Filtering column 0 <= Hour <= 23 (-1 rows removed)
+Filtering column -15 <= Temperature(°C) <= 40 (-45 rows removed)
+Filtering column 0 <= Humidity(%) <= 100 (-1 rows removed)
+Filtering column 0 <= Wind speed (m/s) <= 7 (-4 rows removed)
+Filtering column 30 <= Visibility (10m) <= 2000 (-2 rows removed)
+Filtering column -30 <= Dew point temperature(°C) <= 27 (-3 rows removed)
+Filtering column 0 <= Solar Radiation (MJ/m2) <= 3.5 (-3 rows removed)
+Filtering column 0 <= Rainfall(mm) <= 35 (-1 rows removed)
+Filtering column 0 <= Snowfall (cm) <= 8 (-3 rows removed)
+DataValidator: dRangesChecker done [-63 total rows removed]
+
+DataValidator: run done shape (8697, 14)
+
+DataPreparator: init
+DataPreparator: run [(8697, 14) in shape]
+DataPreparator: removeNulls
+DataPreparator: removeNulls done (-4 rows removed)
+
+DatetimePreparation: datetimePreparation
+DatetimePreparation: datetimePreparation done
+
+DatetimePreparation: categoricalPreparation
+DatetimePreparation: categoricalPreparation done
+
+                 date  rented  hour  temperature  humidity  wind  visibility  \
+0 2018-11-30 23:00:00     584    23          1.9        43   1.3        1909   
+1 2018-11-30 22:00:00     712    22          2.1        41   1.0        1859   
+2 2018-11-30 21:00:00     694    21          2.6        39   0.3        1968   
+
+   dewPoint  radiation  rain  snow  holiday  open  dW  dD  dM  s_autumn  \
+0      -9.3        0.0   0.0   0.0        1     1   4  30  11         1   
+1      -9.8        0.0   0.0   0.0        1     1   4  30  11         1   
+2      -9.9        0.0   0.0   0.0        1     1   4  30  11         1   
+
+   s_spring  s_summer  s_winter  
+0         0         0         0  
+1         0         0         0  
+2         0         0         0  
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 8693 entries, 0 to 8692
+Data columns (total 20 columns):
+ #   Column       Non-Null Count  Dtype         
+---  ------       --------------  -----         
+ 0   date         8693 non-null   datetime64[ns]
+ 1   rented       8693 non-null   Int64         
+ 2   hour         8693 non-null   Int64         
+ 3   temperature  8693 non-null   Float64       
+ 4   humidity     8693 non-null   Int64         
+ 5   wind         8693 non-null   Float64       
+ 6   visibility   8693 non-null   Int64         
+ 7   dewPoint     8693 non-null   Float64       
+ 8   radiation    8693 non-null   Float64       
+ 9   rain         8693 non-null   Float64       
+ 10  snow         8693 non-null   Float64       
+ 11  holiday      8693 non-null   int64         
+ 12  open         8693 non-null   int64         
+ 13  dW           8693 non-null   int32         
+ 14  dD           8693 non-null   int32         
+ 15  dM           8693 non-null   int32         
+ 16  s_autumn     8693 non-null   int64         
+ 17  s_spring     8693 non-null   int64         
+ 18  s_summer     8693 non-null   int64         
+ 19  s_winter     8693 non-null   int64         
+dtypes: Float64(6), Int64(4), datetime64[ns](1), int32(3), int64(6)
+memory usage: 1.3 MB
+                                date      rented       hour  temperature  \
+count                           8693      8693.0     8693.0       8693.0   
+mean   2018-06-02 09:13:24.233291008  707.972277  11.520419    13.047268   
+min              2017-12-01 00:00:00         0.0        0.0        -15.0   
+25%              2018-03-03 23:00:00       194.0        6.0          3.6   
+50%              2018-06-02 18:00:00       512.0       12.0         13.9   
+75%              2018-09-01 08:00:00      1069.0       18.0         22.6   
+max              2018-11-30 23:00:00      3556.0       23.0         39.4   
+std                              NaN  645.496581   6.923482    11.794418   
+
+        humidity      wind   visibility   dewPoint  radiation      rain  \
+count     8693.0    8693.0       8693.0     8693.0     8693.0    8693.0   
+mean   58.332106  1.719418  1433.817899   4.251076   0.571555  0.149661   
+min          0.0       0.0         33.0      -29.6        0.0       0.0   
+25%         43.0       0.9        934.0       -4.5        0.0       0.0   
+50%         57.0       1.5       1690.0        5.2       0.01       0.0   
+75%         74.0       2.3       2000.0       14.9       0.94       0.0   
+max         98.0       6.9       2000.0       26.8       3.49      35.0   
+std    20.343275  1.030418   608.625409  12.898525   0.869666  1.132416   
+
+           snow      holiday         open           dW           dD  \
+count    8693.0  8693.000000  8693.000000  8693.000000  8693.000000   
+mean   0.070678     0.950305     0.966065     2.998274    15.694927   
+min         0.0     0.000000     0.000000     0.000000     1.000000   
+25%         0.0     1.000000     1.000000     1.000000     8.000000   
+50%         0.0     1.000000     1.000000     3.000000    16.000000   
+75%         0.0     1.000000     1.000000     5.000000    23.000000   
+max         7.1     1.000000     1.000000     6.000000    31.000000   
+std    0.416074     0.217327     0.181073     2.002385     8.783004   
+
+                dM     s_autumn     s_spring     s_summer     s_winter  
+count  8693.000000  8693.000000  8693.000000  8693.000000  8693.000000  
+mean      6.546647     0.251007     0.253307     0.253882     0.241804  
+min       1.000000     0.000000     0.000000     0.000000     0.000000  
+25%       4.000000     0.000000     0.000000     0.000000     0.000000  
+50%       7.000000     0.000000     0.000000     0.000000     0.000000  
+75%      10.000000     1.000000     1.000000     1.000000     0.000000  
+max      12.000000     1.000000     1.000000     1.000000     1.000000  
+std       3.430668     0.433617     0.434930     0.435256     0.428201  
+DataPreparator: run done [(8693, 20) out shape]
+
+Model: init
+Model: run
+Model: featuresSelection
+temperature    0.536099
+hour           0.408911
+dewPoint       0.374638
+date           0.338689
+s_summer       0.294677
+radiation      0.259290
+open           0.205575
+visibility     0.203988
+humidity      -0.205438
+s_winter      -0.421081
+Name: rented, dtype: float64
+Features dropped: ['rented', 'wind', 'rain', 'snow', 'holiday', 'dW', 'dD', 'dM', 's_autumn', 's_spring']
+Model: featuresSelection done
+
+Model: splitData
+Training Window [2018-11-12 18:00:00, 2017-12-01 00:00:00] 346 days 18:00:00 (8258 first rows)
+Testing  Window [2018-11-30 23:00:00, 2018-11-12 19:00:00] 18 days 04:00:00 (435 last rows)
+Model: splitData done
+
+
+Model: RFR
+{
+  "module": "sklearn.ensemble",
+  "class": "RandomForestRegressor",
+  "hyperparameters": {
+    "random_state": [
+      0
+    ],
+    "n_estimators": [
+      10,
+      20,
+      30,
+      40,
+      50,
+      100
+    ],
+    "verbose": [
+      1
+    ]
+  }
+}
+Model: train
+Fitting 5 folds for each of 6 candidates, totalling 30 fits
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    1.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    1.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    1.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    1.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    2.1s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    1.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    1.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    1.8s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    1.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    1.9s
+[Parallel(n_jobs=1)]: Done  49 tasks      | elapsed:    0.0s
+   mean_fit_time  std_fit_time  mean_score_time  std_score_time  \
+0       0.398506      0.005731         0.007033        0.000677   
+1       0.788417      0.016588         0.010307        0.001421   
+2       1.191859      0.033121         0.013101        0.001127   
+3       1.571417      0.033887         0.016040        0.001769   
+4       2.002062      0.074718         0.020578        0.002709   
+5       3.913938      0.068173         0.035811        0.004369   
+
+  param_n_estimators param_random_state param_verbose  \
+0                 10                  0             1   
+1                 20                  0             1   
+2                 30                  0             1   
+3                 40                  0             1   
+4                 50                  0             1   
+5                100                  0             1   
+
+                                              params  split0_test_score  \
+0  {'n_estimators': 10, 'random_state': 0, 'verbo...           0.625923   
+1  {'n_estimators': 20, 'random_state': 0, 'verbo...           0.613555   
+2  {'n_estimators': 30, 'random_state': 0, 'verbo...           0.618085   
+3  {'n_estimators': 40, 'random_state': 0, 'verbo...           0.631953   
+4  {'n_estimators': 50, 'random_state': 0, 'verbo...           0.632221   
+5  {'n_estimators': 100, 'random_state': 0, 'verb...           0.627006   
+
+   split1_test_score  split2_test_score  split3_test_score  split4_test_score  \
+0           0.488923           0.769563           0.434455           0.227005   
+1           0.519340           0.775469           0.417194           0.286602   
+2           0.523856           0.779763           0.415466           0.295211   
+3           0.526412           0.780171           0.420062           0.294815   
+4           0.525632           0.778443           0.412361           0.290607   
+5           0.534609           0.780839           0.409661           0.296091   
+
+   mean_test_score  std_test_score  rank_test_score  
+0         0.509174        0.182781                6  
+1         0.522432        0.166752                5  
+2         0.526476        0.166349                4  
+3         0.530683        0.167564                1  
+4         0.527853        0.169303                3  
+5         0.529641        0.168253                2  
+Model: train done
+
+Model: test
+Mean Absolute Error: 238.487
+Total-Stock-Known Percentage-Error: 6.707%
+Model: test done
+
+
+Model: XGB
+{
+  "module": "xgboost",
+  "class": "XGBRegressor",
+  "hyperparameters": {
+    "random_state": [
+      0
+    ],
+    "max_depth": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "tree_method": [
+      "hist"
+    ],
+    "verbosity": [
+      1
+    ]
+  }
+}
+Model: train
+Fitting 5 folds for each of 6 candidates, totalling 30 fits
+   mean_fit_time  std_fit_time  mean_score_time  std_score_time  \
+0       0.088725      0.001813         0.008562        0.000375   
+1       0.122513      0.015947         0.009204        0.000184   
+2       0.155247      0.002469         0.010137        0.000049   
+3       0.221147      0.004489         0.011177        0.000061   
+4       0.317067      0.006789         0.012626        0.000145   
+5       0.441600      0.004869         0.013850        0.000550   
+
+  param_max_depth param_random_state param_tree_method param_verbosity  \
+0               3                  0              hist               1   
+1               4                  0              hist               1   
+2               5                  0              hist               1   
+3               6                  0              hist               1   
+4               7                  0              hist               1   
+5               8                  0              hist               1   
+
+                                              params  split0_test_score  \
+0  {'max_depth': 3, 'random_state': 0, 'tree_meth...           0.704516   
+1  {'max_depth': 4, 'random_state': 0, 'tree_meth...           0.664900   
+2  {'max_depth': 5, 'random_state': 0, 'tree_meth...           0.657789   
+3  {'max_depth': 6, 'random_state': 0, 'tree_meth...           0.667423   
+4  {'max_depth': 7, 'random_state': 0, 'tree_meth...           0.672459   
+5  {'max_depth': 8, 'random_state': 0, 'tree_meth...           0.658552   
+
+   split1_test_score  split2_test_score  split3_test_score  split4_test_score  \
+0           0.592369           0.766301           0.434945           0.156465   
+1           0.618050           0.756786           0.419480           0.158172   
+2           0.423737           0.761750           0.308329           0.102990   
+3           0.506325           0.755087           0.336057          -0.027785   
+4           0.473750           0.746190           0.369896           0.202077   
+5           0.485568           0.730007           0.376942           0.206065   
+
+   mean_test_score  std_test_score  rank_test_score  
+0         0.530919        0.218515                1  
+1         0.523478        0.213373                2  
+2         0.450919        0.237292                5  
+3         0.447421        0.277399                6  
+4         0.492875        0.198228                3  
+5         0.491427        0.189433                4  
+Model: train done
+
+Model: test
+Mean Absolute Error: 228.533
+Total-Stock-Known Percentage-Error: 6.427%
+Model: test done
+
+Model: run done
+
+Pipeline: run done
+$ sudo docker run -it --rm -v /home/x/Escritorio/shared:/shared bikes_job python3 app/pipeline.py test /shared/settings.json /shared/SeoulBikeData_test.csv /shared/model.pkl
+
+Pipeline: init [settings path '/shared/settings.json']
+{
+  "dataExtractor": {
+    "encoding": "ISO-8859-15",
+    "dtypes": {
+      "Date": "object",
+      "Rented Bike Count": "Int64",
+      "Hour": "Int64",
+      "Temperature(\u00b0C)": "Float64",
+      "Humidity(%)": "Int64",
+      "Wind speed (m/s)": "Float64",
+      "Visibility (10m)": "Int64",
+      "Dew point temperature(\u00b0C)": "Float64",
+      "Solar Radiation (MJ/m2)": "Float64",
+      "Rainfall(mm)": "Float64",
+      "Snowfall (cm)": "Float64",
+      "Seasons": "object",
+      "Holiday": "object",
+      "Functioning Day": "object"
+    }
+  },
+  "dataValidator": {
+    "dtypes": {
+      "Date": "object",
+      "Rented Bike Count": "Int64",
+      "Hour": "Int64",
+      "Temperature(\u00b0C)": "Float64",
+      "Humidity(%)": "Int64",
+      "Wind speed (m/s)": "Float64",
+      "Visibility (10m)": "Int64",
+      "Dew point temperature(\u00b0C)": "Float64",
+      "Solar Radiation (MJ/m2)": "Float64",
+      "Rainfall(mm)": "Float64",
+      "Snowfall (cm)": "Float64",
+      "Seasons": "object",
+      "Holiday": "object",
+      "Functioning Day": "object"
+    },
+    "maxNulls%": {
+      "Date": 0,
+      "Rented Bike Count": 10,
+      "Hour": 10,
+      "Temperature(\u00b0C)": 10,
+      "Humidity(%)": 10,
+      "Wind speed (m/s)": 10,
+      "Visibility (10m)": 10,
+      "Dew point temperature(\u00b0C)": 10,
+      "Solar Radiation (MJ/m2)": 10,
+      "Rainfall(mm)": 10,
+      "Snowfall (cm)": 10,
+      "Seasons": 10,
+      "Holiday": 10,
+      "Functioning Day": 10
+    },
+    "dranges": {
+      "Date": [
+        "01/01/2000",
+        "01/01/2019"
+      ],
+      "Rented Bike Count": [
+        0,
+        null
+      ],
+      "Hour": [
+        0,
+        23
+      ],
+      "Temperature(\u00b0C)": [
+        -15,
+        40
+      ],
+      "Humidity(%)": [
+        0,
+        100
+      ],
+      "Wind speed (m/s)": [
+        0,
+        7
+      ],
+      "Visibility (10m)": [
+        30,
+        2000
+      ],
+      "Dew point temperature(\u00b0C)": [
+        -30,
+        27
+      ],
+      "Solar Radiation (MJ/m2)": [
+        0,
+        3.5
+      ],
+      "Rainfall(mm)": [
+        0,
+        35
+      ],
+      "Snowfall (cm)": [
+        0,
+        8
+      ],
+      "Seasons": 4,
+      "Holiday": 2,
+      "Functioning Day": 2
+    }
+  },
+  "dataPreparator": {
+    "renameColumns": {
+      "Date": "date",
+      "Rented Bike Count": "rented",
+      "Hour": "hour",
+      "Temperature(\u00b0C)": "temperature",
+      "Humidity(%)": "humidity",
+      "Wind speed (m/s)": "wind",
+      "Visibility (10m)": "visibility",
+      "Dew point temperature(\u00b0C)": "dewPoint",
+      "Solar Radiation (MJ/m2)": "radiation",
+      "Rainfall(mm)": "rain",
+      "Snowfall (cm)": "snow",
+      "Seasons": "seasons",
+      "Holiday": "holiday",
+      "Functioning Day": "open"
+    }
+  },
+  "modelTraining": {
+    "featuresSelection": {
+      "correlation": 20
+    },
+    "splitData": {
+      "train_window_percentage": 0.95
+    },
+    "maxPe": 5
+  }
+}
+Pipeline: init done
+
+Pipeline: run
+DataExtractor: init
+
+DataExtractor: run
+DataExtractor: run done [shape (8760, 13)]
+
+DataValidator: init
+
+DataValidator: run
+DataValidator: dNullsChecker
+                       column  nulls found %  max allowed %
+0                        Date       0.000000            0.0
+1                        Hour       0.011416           10.0
+2             Temperature(°C)       0.011416           10.0
+3                 Humidity(%)       0.011416           10.0
+4            Wind speed (m/s)       0.011416           10.0
+5            Visibility (10m)       0.011416           10.0
+6   Dew point temperature(°C)       0.011416           10.0
+7     Solar Radiation (MJ/m2)       0.011416           10.0
+8                Rainfall(mm)       0.011416           10.0
+9               Snowfall (cm)       0.011416           10.0
+10                    Seasons       0.011416           10.0
+11                    Holiday       0.011416           10.0
+12            Functioning Day       0.011416           10.0
+DataValidator: dNullsChecker done
+
+DataValidator: dTypesChecker
+DataValidator: dTypesChecker done
+
+DataValidator: dRangesChecker
+Filtering column 01/01/2000 <= Date <= 01/01/2019 (0 rows removed)
+Filtering column 0 <= Rented Bike Count <= None (0 rows removed)
+Filtering column 0 <= Hour <= 23 (-1 rows removed)
+Filtering column -15 <= Temperature(°C) <= 40 (-45 rows removed)
+Filtering column 0 <= Humidity(%) <= 100 (-1 rows removed)
+Filtering column 0 <= Wind speed (m/s) <= 7 (-4 rows removed)
+Filtering column 30 <= Visibility (10m) <= 2000 (-2 rows removed)
+Filtering column -30 <= Dew point temperature(°C) <= 27 (-3 rows removed)
+Filtering column 0 <= Solar Radiation (MJ/m2) <= 3.5 (-3 rows removed)
+Filtering column 0 <= Rainfall(mm) <= 35 (-1 rows removed)
+Filtering column 0 <= Snowfall (cm) <= 8 (-3 rows removed)
+DataValidator: dRangesChecker done [-63 total rows removed]
+
+DataValidator: run done shape (8697, 13)
+
+DataPreparator: init
+DataPreparator: run [(8697, 13) in shape]
+DataPreparator: removeNulls
+DataPreparator: removeNulls done (-3 rows removed)
+
+DatetimePreparation: datetimePreparation
+DatetimePreparation: datetimePreparation done
+
+DatetimePreparation: categoricalPreparation
+DatetimePreparation: categoricalPreparation done
+
+                 date  hour  temperature  humidity  wind  visibility  \
+0 2018-11-30 23:00:00    23          1.9        43   1.3        1909   
+1 2018-11-30 22:00:00    22          2.1        41   1.0        1859   
+2 2018-11-30 21:00:00    21          2.6        39   0.3        1968   
+
+   dewPoint  radiation  rain  snow  holiday  open  dW  dD  dM  s_autumn  \
+0      -9.3        0.0   0.0   0.0        1     1   4  30  11         1   
+1      -9.8        0.0   0.0   0.0        1     1   4  30  11         1   
+2      -9.9        0.0   0.0   0.0        1     1   4  30  11         1   
+
+   s_spring  s_summer  s_winter  
+0         0         0         0  
+1         0         0         0  
+2         0         0         0  
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 8694 entries, 0 to 8693
+Data columns (total 19 columns):
+ #   Column       Non-Null Count  Dtype         
+---  ------       --------------  -----         
+ 0   date         8694 non-null   datetime64[ns]
+ 1   hour         8694 non-null   Int64         
+ 2   temperature  8694 non-null   Float64       
+ 3   humidity     8694 non-null   Int64         
+ 4   wind         8694 non-null   Float64       
+ 5   visibility   8694 non-null   Int64         
+ 6   dewPoint     8694 non-null   Float64       
+ 7   radiation    8694 non-null   Float64       
+ 8   rain         8694 non-null   Float64       
+ 9   snow         8694 non-null   Float64       
+ 10  holiday      8694 non-null   int64         
+ 11  open         8694 non-null   int64         
+ 12  dW           8694 non-null   int32         
+ 13  dD           8694 non-null   int32         
+ 14  dM           8694 non-null   int32         
+ 15  s_autumn     8694 non-null   int64         
+ 16  s_spring     8694 non-null   int64         
+ 17  s_summer     8694 non-null   int64         
+ 18  s_winter     8694 non-null   int64         
+dtypes: Float64(6), Int64(3), datetime64[ns](1), int32(3), int64(6)
+memory usage: 1.2 MB
+                                date       hour  temperature   humidity  \
+count                           8694     8694.0       8694.0     8694.0   
+mean   2018-06-02 08:43:06.749482496  11.520474    13.045963  58.328042   
+min              2017-12-01 00:00:00        0.0        -15.0        0.0   
+25%              2018-03-03 22:15:00        6.0          3.6       43.0   
+50%              2018-06-02 17:30:00       12.0         13.9       57.0   
+75%              2018-09-01 07:45:00       18.0         22.6       74.0   
+max              2018-11-30 23:00:00       23.0         39.4       98.0   
+std                              NaN   6.923086    11.794368  20.345634   
+
+           wind   visibility   dewPoint  radiation      rain      snow  \
+count    8694.0       8694.0     8694.0     8694.0    8694.0    8694.0   
+mean   1.719381  1433.883023   4.248608   0.571617  0.149643  0.070669   
+min         0.0         33.0      -29.6        0.0       0.0       0.0   
+25%         0.9       934.25       -4.5        0.0       0.0       0.0   
+50%         1.5       1690.5        5.2       0.01       0.0       0.0   
+75%         2.3       2000.0       14.9       0.94       0.0       0.0   
+max         6.9       2000.0       26.8       3.49      35.0       7.1   
+std    1.030364   608.620694  12.899835   0.869635  1.132352   0.41605   
+
+           holiday         open           dW           dD           dM  \
+count  8694.000000  8694.000000  8694.000000  8694.000000  8694.000000   
+mean      0.950311     0.966069     2.998390    15.693237     6.547274   
+min       0.000000     0.000000     0.000000     1.000000     1.000000   
+25%       1.000000     1.000000     1.000000     8.000000     4.000000   
+50%       1.000000     1.000000     3.000000    16.000000     7.000000   
+75%       1.000000     1.000000     5.000000    23.000000    10.000000   
+max       1.000000     1.000000     6.000000    31.000000    12.000000   
+std       0.217315     0.181063     2.002299     8.783913     3.430969   
+
+          s_autumn     s_spring     s_summer     s_winter  
+count  8694.000000  8694.000000  8694.000000  8694.000000  
+mean      0.250978     0.253278     0.253853     0.241891  
+min       0.000000     0.000000     0.000000     0.000000  
+25%       0.000000     0.000000     0.000000     0.000000  
+50%       0.000000     0.000000     0.000000     0.000000  
+75%       1.000000     1.000000     1.000000     0.000000  
+max       1.000000     1.000000     1.000000     1.000000  
+std       0.433601     0.434914     0.435240     0.428253  
+DataPreparator: run done [(8694, 19) out shape]
+
+Model: init
+Model: test
+Model: test done
+
+Pipeline: run done
+

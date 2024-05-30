@@ -1,0 +1,98 @@
+{
+	"dataExtractor": {
+		"encoding": "ISO-8859-15",
+		"dtypes": {
+		  "Date": "object",
+		  "Rented Bike Count": "Int64",
+		  "Hour": "Int64",
+		  "Temperature(°C)": "Float64",
+		  "Humidity(%)": "Int64",
+		  "Wind speed (m/s)": "Float64",
+		  "Visibility (10m)": "Int64",
+		  "Dew point temperature(°C)": "Float64",
+		  "Solar Radiation (MJ/m2)": "Float64",
+		  "Rainfall(mm)": "Float64",
+		  "Snowfall (cm)": "Float64",
+		  "Seasons": "object",
+		  "Holiday": "object",
+		  "Functioning Day": "object"
+		}
+	},
+	"dataValidator": {
+		"dtypes": {
+		  "Date": "object",
+		  "Rented Bike Count": "Int64",
+		  "Hour": "Int64",
+		  "Temperature(°C)": "Float64",
+		  "Humidity(%)": "Int64",
+		  "Wind speed (m/s)": "Float64",
+		  "Visibility (10m)": "Int64",
+		  "Dew point temperature(°C)": "Float64",
+		  "Solar Radiation (MJ/m2)": "Float64",
+		  "Rainfall(mm)": "Float64",
+		  "Snowfall (cm)": "Float64",
+		  "Seasons": "object",
+		  "Holiday": "object",
+		  "Functioning Day": "object"
+		},
+		"maxNulls%": {
+		  "Date": 0,
+		  "Rented Bike Count": 10,
+		  "Hour": 10,
+		  "Temperature(°C)": 10,
+		  "Humidity(%)": 10,
+		  "Wind speed (m/s)": 10,
+		  "Visibility (10m)": 10,
+		  "Dew point temperature(°C)": 10,
+		  "Solar Radiation (MJ/m2)": 10,
+		  "Rainfall(mm)": 10,
+		  "Snowfall (cm)": 10,
+		  "Seasons": 10,
+		  "Holiday": 10,
+		  "Functioning Day": 10
+		},
+		"dranges": {
+		  "Date": ["01/01/2000", "01/01/2019"],
+		  "Rented Bike Count": [0, null],
+		  "Hour": [0, 23],
+		  "Temperature(°C)": [-15, 40],
+		  "Humidity(%)": [0, 100],
+		  "Wind speed (m/s)": [0, 7],
+		  "Visibility (10m)": [30, 2000],
+		  "Dew point temperature(°C)": [-30, 27],
+		  "Solar Radiation (MJ/m2)": [0, 3.5],
+		  "Rainfall(mm)": [0, 35],
+		  "Snowfall (cm)": [0, 8],
+		  "Seasons": 4,
+		  "Holiday": 2,
+		  "Functioning Day": 2
+		}
+	},
+	"dataPreparator": {
+		"renameColumns": {
+			"Date": "date",
+			"Rented Bike Count": "rented",
+			"Hour": "hour",
+			"Temperature(°C)": "temperature",
+			"Humidity(%)": "humidity",
+			"Wind speed (m/s)": "wind",
+			"Visibility (10m)": "visibility",
+			"Dew point temperature(°C)": "dewPoint",
+			"Solar Radiation (MJ/m2)": "radiation",
+			"Rainfall(mm)": "rain",
+			"Snowfall (cm)": "snow",
+			"Seasons": "seasons",
+			"Holiday": "holiday",
+			"Functioning Day": "open"
+		}
+	},
+	"modelTraining": {
+		"featuresSelection": {
+			"correlation": 20
+		},
+		"splitData": {
+			"train_window_percentage": 0.95
+		},
+		"maxPe": 5
+	}
+}
